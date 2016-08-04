@@ -26,10 +26,26 @@ def make_a_shuffled_deck(cards):
 	return cards
 
 def convert_card_list_to_symbols(cards):
+	symb=[]
+	temp=""
 	s=u"\u2660"
 	c=u"\u2663"
 	h=u"\u2665"
 	d=u"\u2666"
-	print(s,c,h,d)
+	#return(s,c,h,d)
+	for i in cards:
+		temp=i[1]
+		if(temp=="s"):
+			temp=s
+		if(temp=="c"):
+			temp=c
+		if(temp=="h"):
+			temp=h
+		if(temp=="d"):
+			temp=d
+		symb.append([str(i[0])+" of "+temp])
+	return symb
+
+
 
 print(convert_card_list_to_symbols(make_a_shuffled_deck(cards)))
