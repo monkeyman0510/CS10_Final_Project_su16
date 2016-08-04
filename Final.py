@@ -47,9 +47,9 @@ def convert_card_list_to_symbols(cards):
 		symb.append([str(i[0])+" of "+temp])
 	return symb
 
-def deal_four_using_deck():
+def deal_n_using_deck(n):
 	player=[]
-	for i in range(0,4):
+	for i in range(0,n):
 		cardno=randint(0,len(deck))
 		player.append(deck[cardno])
 		deck.remove(deck[cardno])
@@ -57,13 +57,16 @@ def deal_four_using_deck():
 
 deck = make_a_shuffled_deck(list_of_all_cards)
 
-player_hand=deal_four_using_deck()
-comp_hand=deal_four_using_deck()
+player_hand=deal_n_using_deck(6)
+comp_hand=deal_n_using_deck(4)
+crib=deal_n_using_deck(2)
 
 print(convert_card_list_to_symbols(deck))
 print(" ")
 print(convert_card_list_to_symbols(player_hand))
 print(" ")
 print(convert_card_list_to_symbols(comp_hand))
+print(" ")
+print(convert_card_list_to_symbols(crib))
 print(" ")
 print(convert_card_list_to_symbols(deck))
