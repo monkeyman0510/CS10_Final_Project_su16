@@ -9,7 +9,7 @@ while("start" not in temp.lower()):
 		webbrowser.open("http://www.cribbage.org/rules/rule1.asp")
 	if ("credits" in temp.lower()):
 		print(title)
-cards = [['A','s'],[2,'s'],[3,'s'],[4,'s'],[5,'s'],[6,'s'],[7,'s'],[8,'s'],[9,'s'],['T','s'],['J','s'],['Q','s'],['K','s'],['A','c'],[2,'c'],[3,'c'],[4,'c'],[5,'c'],[6,'c'],[7,'c'],[8,'c'],[9,'c'],['T','c'],['J','c'],['Q','c'],['K','c'],['A','h'],[2,'h'],[3,'h'],[4,'h'],[5,'h'],[6,'h'],[7,'h'],[8,'h'],[9,'h'],['T','h'],['J','h'],['Q','h'],['K','h'],['A','d'],[2,'d'],[3,'d'],[4,'d'],[5,'d'],[6,'d'],[7,'d'],[8,'d'],[9,'d'],['T','d'],['J','d'],['Q','d'],['K','d']]
+list_of_all_cards = [['A','s'],[2,'s'],[3,'s'],[4,'s'],[5,'s'],[6,'s'],[7,'s'],[8,'s'],[9,'s'],['T','s'],['J','s'],['Q','s'],['K','s'],['A','c'],[2,'c'],[3,'c'],[4,'c'],[5,'c'],[6,'c'],[7,'c'],[8,'c'],[9,'c'],['T','c'],['J','c'],['Q','c'],['K','c'],['A','h'],[2,'h'],[3,'h'],[4,'h'],[5,'h'],[6,'h'],[7,'h'],[8,'h'],[9,'h'],['T','h'],['J','h'],['Q','h'],['K','h'],['A','d'],[2,'d'],[3,'d'],[4,'d'],[5,'d'],[6,'d'],[7,'d'],[8,'d'],[9,'d'],['T','d'],['J','d'],['Q','d'],['K','d']]
 
 cardvals = {'A':1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,'T':10,'J':10,'Q':10,'K':10}
 
@@ -47,6 +47,23 @@ def convert_card_list_to_symbols(cards):
 		symb.append([str(i[0])+" of "+temp])
 	return symb
 
+def deal_four_using_deck():
+	player=[]
+	for i in range(0,4):
+		cardno=randint(0,len(deck))
+		player.append(deck[cardno])
+		deck.remove(deck[cardno])
+	return(player)
 
+deck = make_a_shuffled_deck(list_of_all_cards)
 
-print(convert_card_list_to_symbols(make_a_shuffled_deck(cards)))
+player_hand=deal_four_using_deck()
+comp_hand=deal_four_using_deck()
+
+print(convert_card_list_to_symbols(deck))
+print(" ")
+print(convert_card_list_to_symbols(player_hand))
+print(" ")
+print(convert_card_list_to_symbols(comp_hand))
+print(" ")
+print(convert_card_list_to_symbols(deck))
