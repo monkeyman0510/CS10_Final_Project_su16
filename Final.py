@@ -1,5 +1,6 @@
 import webbrowser
 from random import randint, shuffle
+
 title = "\033[1m\033[35m\nFinal Project by Devin Rosenthal\n\033[0m"
 instructions = "\ntemp - fill in later"
 temp=""
@@ -9,9 +10,10 @@ while("start" not in temp.lower()):
 		webbrowser.open("http://www.cribbage.org/rules/rule1.asp")
 	if ("credits" in temp.lower()):
 		print(title)
+
 list_of_all_cards = [['A','s'],[2,'s'],[3,'s'],[4,'s'],[5,'s'],[6,'s'],[7,'s'],[8,'s'],[9,'s'],['T','s'],['J','s'],['Q','s'],['K','s'],['A','c'],[2,'c'],[3,'c'],[4,'c'],[5,'c'],[6,'c'],[7,'c'],[8,'c'],[9,'c'],['T','c'],['J','c'],['Q','c'],['K','c'],['A','h'],[2,'h'],[3,'h'],[4,'h'],[5,'h'],[6,'h'],[7,'h'],[8,'h'],[9,'h'],['T','h'],['J','h'],['Q','h'],['K','h'],['A','d'],[2,'d'],[3,'d'],[4,'d'],[5,'d'],[6,'d'],[7,'d'],[8,'d'],[9,'d'],['T','d'],['J','d'],['Q','d'],['K','d']]
 
-cardvals = {'A':1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,'T':10,'J':10,'Q':10,'K':10}
+cardvals = {"A":1,"2":2,"3":3,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9,"T":10,"J":10,"Q":10,"K":10}
 
 def make_a_shuffled_deck(cards):
 	#Takes list of all possible values and shuffles it to return a new deck
@@ -34,6 +36,11 @@ def if_x_is_y_replace_with_z(x,y,z): #Used for abstraction
 	else:
 		return x
 
+def get_value_of_card(inp):
+	temp1=inp[:]
+	temp=temp1[0][0]
+	return int(cardvals[str(temp)])
+
 def convert_card_list_to_symbols(cards):
 	#Makes easy for user to read the cards
 	symb=[]
@@ -52,10 +59,10 @@ def convert_card_list_to_symbols(cards):
 		symb.append([str(i[0])+" of "+temp]) 
 	return symb
 
-def remove_number_n_from_player_and_place_in_crib(n):
-	if n>len(player_hand):
-		n=len(player_hand)-1
-	crib.append(player_hand.pop(n-1)) #Assists with abstraction
+def remove_number_n_from_p_and_place_in_x(n,p,x):
+	if (n>len(p) or n<=0):
+		n=len(p)
+	x.append(player_hand.pop(n-1)) #Assists with abstraction
 
 def deal_n_using_deck(n): 
 	#Takes n cards out of the deck variable and returns them as a seperate list
@@ -71,18 +78,21 @@ deck = make_a_shuffled_deck(list_of_all_cards)
 player_hand=deal_n_using_deck(6)
 comp_hand=deal_n_using_deck(4)
 crib=deal_n_using_deck(2) #Auto adds computer's cards to crib - May add AI to do this instead (To make it more advanced)
+start_card=deal_n_using_deck(1)
+total=get_value_of_card(start_card)
+
 
 print("\nHere is your hand. Please say the number (1-6) of one of the cards that you would like to place into the crib.\nPlease note \'T\' stands for 10 and that entering a number higher than your hand will use your last card.")
 print(convert_card_list_to_symbols(player_hand))
 temp=input("")
-remove_number_n_from_player_and_place_in_crib(int(temp))
+remove_number_n_from_p_and_place_in_x(int(temp),player_hand,crib)
 print("\nPlease place one more card into the crib.")
 print(convert_card_list_to_symbols(player_hand))
 temp=input("")
-remove_number_n_from_player_and_place_in_crib(int(temp))
+remove_number_n_from_p_and_place_in_x(int(temp),player_hand,crib)
 print("\nHere is your hand")
 print(convert_card_list_to_symbols(player_hand)) 
-start_card=deal_n_using_deck(1)
 print("\nThe starting card is "+str(convert_card_list_to_symbols(start_card)))
+print("The current total is "+str(total))
 print("\ncrib:\n"+str(convert_card_list_to_symbols(crib)))
 print("\ndeck:\n"+str(convert_card_list_to_symbols(deck)))
