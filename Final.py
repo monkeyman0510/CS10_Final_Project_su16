@@ -14,25 +14,28 @@ list_of_all_cards = [['A','s'],[2,'s'],[3,'s'],[4,'s'],[5,'s'],[6,'s'],[7,'s'],[
 cardvals = {'A':1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,'T':10,'J':10,'Q':10,'K':10}
 
 def make_a_shuffled_deck(cards):
+	#Takes list of all possible values and shuffles it to return a new deck
+	newCards=cards[:]
 	i=0
 	shuf = input("How many times should the deck be shuffled?\n") #Takes user input
 	print("Shuffling Cards")
 	while(i<int(shuf)):
-		shuffle(cards)
+		shuffle(newCards)
 		i+=1
-		if(i==1):
-			print("1 Shuffle")
-		else:
-			print(str(i)+" Shuffles")
-	return cards
+	if(shuf==1):
+		print("Shuffled 1 time")
+	else:
+		print("Shuffled "+shuf+" times")
+	return newCards
 
-def if_x_is_y_replace_with_z(x,y,z):
+def if_x_is_y_replace_with_z(x,y,z): #Used for abstraction
 	if(x==y):
 		return z
 	else:
 		return x
 
 def convert_card_list_to_symbols(cards):
+	#Makes easy for user to read the cards
 	symb=[]
 	temp=""
 	s=u"\u2660" #unicode value of spades
@@ -42,14 +45,16 @@ def convert_card_list_to_symbols(cards):
 	#return(s,c,h,d)
 	for i in cards:
 		temp=i[1]
-		temp=if_x_is_y_replace_with_z(temp,'s',s) #instead of typing:
+		temp=if_x_is_y_replace_with_z(temp,'s',s) #Abstraction for instead of typing:
 		temp=if_x_is_y_replace_with_z(temp,'c',c) #		if(temp=='s'):
 		temp=if_x_is_y_replace_with_z(temp,'h',h) #			temp=s
-		temp=if_x_is_y_replace_with_z(temp,'d',d) #4 times
-		symb.append([str(i[0])+" of "+temp]) #Makes easy for user to read the cards
+		temp=if_x_is_y_replace_with_z(temp,'d',d) #4 times over (Also saves a little bit of space)
+		symb.append([str(i[0])+" of "+temp]) 
 	return symb
 
 def remove_number_n_from_player_and_place_in_crib(n):
+	if n>len(player_hand):
+		n=len(player_hand)-1
 	crib.append(player_hand.pop(n-1)) #Assists with abstraction
 
 def deal_n_using_deck(n): 
@@ -67,7 +72,7 @@ player_hand=deal_n_using_deck(6)
 comp_hand=deal_n_using_deck(4)
 crib=deal_n_using_deck(2) #Auto adds computer's cards to crib - May add AI to do this instead (To make it more advanced)
 
-print("\nHere is your hand. Please say the number (1-6) of one of the cards that you would like to place into the crib.\nPlease note \'T\' stands for 10.")
+print("\nHere is your hand. Please say the number (1-6) of one of the cards that you would like to place into the crib.\nPlease note \'T\' stands for 10 and that entering a number higher than your hand will use your last card.")
 print(convert_card_list_to_symbols(player_hand))
 temp=input("")
 remove_number_n_from_player_and_place_in_crib(int(temp))
@@ -75,4 +80,9 @@ print("\nPlease place one more card into the crib.")
 print(convert_card_list_to_symbols(player_hand))
 temp=input("")
 remove_number_n_from_player_and_place_in_crib(int(temp))
-print(convert_card_list_to_symbols(crib))
+print("\nHere is your hand")
+print(convert_card_list_to_symbols(player_hand)) 
+start_card=deal_n_using_deck(1)
+print("\nThe starting card is "+str(convert_card_list_to_symbols(start_card)))
+print("\ncrib:\n"+str(convert_card_list_to_symbols(crib)))
+print("\ndeck:\n"+str(convert_card_list_to_symbols(deck)))
