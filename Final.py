@@ -53,7 +53,7 @@ def deal_n_using_deck(n):
 	#Takes n cards out of the deck variable and returns them as a seperate list
 	player=[]
 	for i in range(0,n):
-		cardno=randint(0,len(deck))
+		cardno=randint(0,len(deck)-1)
 		player.append(deck[cardno])
 		deck.remove(deck[cardno])
 	return(player)
