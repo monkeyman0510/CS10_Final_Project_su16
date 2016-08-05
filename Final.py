@@ -49,6 +49,9 @@ def convert_card_list_to_symbols(cards):
 		symb.append([str(i[0])+" of "+temp]) #Makes easy for user to read the cards
 	return symb
 
+def remove_number_n_from_player_and_place_in_crib(n):
+	crib.append(player_hand.pop(n-1)) #Assists with abstraction
+
 def deal_n_using_deck(n): 
 	#Takes n cards out of the deck variable and returns them as a seperate list
 	player=[]
@@ -58,18 +61,19 @@ def deal_n_using_deck(n):
 		deck.remove(deck[cardno])
 	return(player)
 
+def play():
 deck = make_a_shuffled_deck(list_of_all_cards)
 
 player_hand=deal_n_using_deck(6)
 comp_hand=deal_n_using_deck(4)
 crib=deal_n_using_deck(2) #Auto adds computer's cards to crib - May add AI to do this instead (To make it more advanced)
 
-print(convert_card_list_to_symbols(deck))
-print(" ")
+print("\nHere is your hand. Please say the number (1-6) of one of the cards that you would like to place into the crib.\nPlease note \'T\' stands for 10.")
 print(convert_card_list_to_symbols(player_hand))
-print(" ")
-print(convert_card_list_to_symbols(comp_hand))
-print(" ")
+temp=input("")
+remove_number_n_from_player_and_place_in_crib(int(temp))
+print("\nPlease place one more card into the crib.")
+print(convert_card_list_to_symbols(player_hand))
+temp=input("")
+remove_number_n_from_player_and_place_in_crib(int(temp))
 print(convert_card_list_to_symbols(crib))
-print(" ")
-print(convert_card_list_to_symbols(deck))
