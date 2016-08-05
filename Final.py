@@ -61,7 +61,6 @@ def deal_n_using_deck(n):
 		deck.remove(deck[cardno])
 	return(player)
 
-def play():
 deck = make_a_shuffled_deck(list_of_all_cards)
 
 player_hand=deal_n_using_deck(6)
