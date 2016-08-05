@@ -15,7 +15,7 @@ cardvals = {'A':1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,'T':10,'J':10,'Q':10,'K':10}
 
 def make_a_shuffled_deck(cards):
 	i=0
-	shuf = input("How many times should the deck be shuffled?\n")
+	shuf = input("How many times should the deck be shuffled?\n") #Takes user input
 	print("Shuffling Cards")
 	while(i<int(shuf)):
 		shuffle(cards)
@@ -26,28 +26,31 @@ def make_a_shuffled_deck(cards):
 			print(str(i)+" Shuffles")
 	return cards
 
+def if_x_is_y_replace_with_z(x,y,z):
+	if(x==y):
+		return z
+	else:
+		return x
+
 def convert_card_list_to_symbols(cards):
 	symb=[]
 	temp=""
-	s=u"\u2660"
-	c=u"\u2663"
-	h=u"\u2665"
-	d=u"\u2666"
+	s=u"\u2660" #unicode value of spades
+	c=u"\u2663" #unicode value of clubs
+	h=u"\u2665" #unicode value of hearts
+	d=u"\u2666" #unicode value of diamonds
 	#return(s,c,h,d)
 	for i in cards:
 		temp=i[1]
-		if(temp=="s"):
-			temp=s
-		if(temp=="c"):
-			temp=c
-		if(temp=="h"):
-			temp=h
-		if(temp=="d"):
-			temp=d
-		symb.append([str(i[0])+" of "+temp])
+		temp=if_x_is_y_replace_with_z(temp,'s',s) #instead of typing:
+		temp=if_x_is_y_replace_with_z(temp,'c',c) #		if(temp=='s'):
+		temp=if_x_is_y_replace_with_z(temp,'h',h) #			temp=s
+		temp=if_x_is_y_replace_with_z(temp,'d',d) #4 times
+		symb.append([str(i[0])+" of "+temp]) #Makes easy for user to read the cards
 	return symb
 
-def deal_n_using_deck(n):
+def deal_n_using_deck(n): 
+	#Takes n cards out of the deck variable and returns them as a seperate list
 	player=[]
 	for i in range(0,n):
 		cardno=randint(0,len(deck))
@@ -59,7 +62,7 @@ deck = make_a_shuffled_deck(list_of_all_cards)
 
 player_hand=deal_n_using_deck(6)
 comp_hand=deal_n_using_deck(4)
-crib=deal_n_using_deck(2)
+crib=deal_n_using_deck(2) #Auto adds computer's cards to crib - May add AI to do this instead (To make it more advanced)
 
 print(convert_card_list_to_symbols(deck))
 print(" ")
