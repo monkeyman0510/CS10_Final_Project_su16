@@ -1,15 +1,17 @@
 import webbrowser
 from random import randint, shuffle
 
-title = "\033[1m\033[35m\nFinal Project by Devin Rosenthal\n\033[0m"
-instructions = "\ntemp - fill in later"
-temp=""
-while("start" not in temp.lower()):
-	temp = input("Type \"Help\" for Rules\nType \"Start\" to Start\nType \"Credits\" for Credits\n")
-	if("help" in temp.lower()):
-		webbrowser.open("http://www.cribbage.org/rules/rule1.asp")
-	if ("credits" in temp.lower()):
-		print(title)
+
+def start():
+	title = "\033[1m\033[35m\nFinal Project by Devin Rosenthal\n\033[0m"
+	instructions = "\ntemp - fill in later"
+	temp=""
+	while("start" not in temp.lower()):
+		temp = input("Type \"Help\" for Rules\nType \"Start\" to Start\nType \"Credits\" for Credits\n")
+		if("help" in temp.lower()):
+			webbrowser.open("http://www.cribbage.org/rules/rule1.asp")
+		if ("credits" in temp.lower()):
+			print(title)
 
 list_of_all_cards = [['A','s'],[2,'s'],[3,'s'],[4,'s'],[5,'s'],[6,'s'],[7,'s'],[8,'s'],[9,'s'],['T','s'],['J','s'],['Q','s'],['K','s'],['A','c'],[2,'c'],[3,'c'],[4,'c'],[5,'c'],[6,'c'],[7,'c'],[8,'c'],[9,'c'],['T','c'],['J','c'],['Q','c'],['K','c'],['A','h'],[2,'h'],[3,'h'],[4,'h'],[5,'h'],[6,'h'],[7,'h'],[8,'h'],[9,'h'],['T','h'],['J','h'],['Q','h'],['K','h'],['A','d'],[2,'d'],[3,'d'],[4,'d'],[5,'d'],[6,'d'],[7,'d'],[8,'d'],[9,'d'],['T','d'],['J','d'],['Q','d'],['K','d']]
 
@@ -37,9 +39,8 @@ def if_x_is_y_replace_with_z(x,y,z): #Used for abstraction
 		return x
 
 def get_value_of_card(inp):
-	temp1=inp[:]
-	temp=temp1[0][0]
-	return int(cardvals[str(temp)])
+	temp=inp[0]
+	return cardvals[str(temp)]
 
 def convert_card_list_to_symbols(cards):
 	#Makes easy for user to read the cards
@@ -73,14 +74,67 @@ def deal_n_using_deck(n):
 		deck.remove(deck[cardno])
 	return(player)
 
+def debug():
+	print("\nstart_card:\n"+str(convert_card_list_to_symbols(start_card)))
+	print("\nplayer_hand:\n"+str(convert_card_list_to_symbols(player_hand)))
+	print("\ncomp_hand:\n"+str(convert_card_list_to_symbols(comp_hand)))
+	print("\ncrib:\n"+str(convert_card_list_to_symbols(crib)))
+	print("\ndeck:\n"+str(convert_card_list_to_symbols(deck)))
+
+def ptotal():
+	print("\nThe current total is "+str(total))
+
+def possible_discard(deck):
+	for i in deck:
+		if(int(cardvals[str([i][0][0])]) <= 31 - total):
+			#print(get_value_of_card([i][0]))  #<-Used for testing
+			return True
+	return False
+
+
+def discard_round(turn,total):
+	if(turn==1):
+		if(possible_discard(player_hand)):
+			print("\nHere is your hand") 
+			print(convert_card_list_to_symbols(player_hand))
+			ptotal()
+			temp=input("Which card would you like to play?")
+			temp = int(temp)
+			if(temp>len(player_remaining) or temp<1):
+				print("The number that you have entered is out of range.")
+				discard_round(1,total)
+			if(int(get_value_of_card(player_remaining[temp-1])) + total > 31):
+				print("The calue of that card is too high. The highest that the total can be is 31")
+				discard_round(1,total)
+			else:
+				remove_number_n_from_p_and_place_in_x(temp,player_remaining,[])
+				total = int(get_value_of_card(player_remaining[temp-1])) + total
+				if(total==15):
+					print("You got the total to 15! You get 2 points!")
+					player_score+=2
+				if(total==31):
+					print("You got the total to 31! You get 2 points!")
+					player_score+=2
+					total=0
+				#discard_round(2,total)
+		else:
+			print("No possible moves. It is now the computer\'s turn")
+			discard_round(2,total)
+
+start()
+
+
+
 deck = make_a_shuffled_deck(list_of_all_cards)
 
 player_hand=deal_n_using_deck(6)
 comp_hand=deal_n_using_deck(4)
 crib=deal_n_using_deck(2) #Auto adds computer's cards to crib - May add AI to do this instead (To make it more advanced)
-start_card=deal_n_using_deck(1)
+start_card=deal_n_using_deck(1)[0]
 total=get_value_of_card(start_card)
-
+player_score=0
+computer_score=0
+turn=1
 
 print("\nHere is your hand. Please say the number (1-6) of one of the cards that you would like to place into the crib.\nPlease note \'T\' stands for 10 and that entering a number higher than your hand will use your last card.")
 print(convert_card_list_to_symbols(player_hand))
@@ -92,7 +146,9 @@ temp=input("")
 remove_number_n_from_p_and_place_in_x(int(temp),player_hand,crib)
 print("\nHere is your hand")
 print(convert_card_list_to_symbols(player_hand)) 
-print("\nThe starting card is "+str(convert_card_list_to_symbols(start_card)))
-print("The current total is "+str(total))
-print("\ncrib:\n"+str(convert_card_list_to_symbols(crib)))
-print("\ndeck:\n"+str(convert_card_list_to_symbols(deck)))
+print("\nThe starting card is "+str(convert_card_list_to_symbols([start_card])))
+player_remaining=player_hand[:]
+comp_remaining=comp_hand[:]
+discard_round(turn,total)
+
+
