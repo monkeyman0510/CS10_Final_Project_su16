@@ -95,7 +95,7 @@ def possible_discard(deck):
 go=0
 last_card=0
 
-def discard_round(turn,total):
+def discard_round(turn):
 	global go, player_score, computer_score, player_remaining, comp_remaining, discarded, total
 	if(len(player_remaining)==0 and len(comp_remaining)==0):
 		print("There are no remaining cards. Now scoring")
@@ -103,23 +103,23 @@ def discard_round(turn,total):
 		if(turn==1):
 			if(len(player_remaining)==0):
 				print("You have run out of cards")
-				discard_round(2,total)
+				discard_round(2)
 			if(possible_discard(player_remaining)):
 				print("\nHere is your hand") 
 				print(convert_card_list_to_symbols(player_remaining))
 				ptotal()
-				temp=input("Which card would you like to play?\n")
-				temp = int(temp)
+				temp = int(input("Which card would you like to play?\n"))
 				if(temp>len(player_remaining) or temp<1):
 					print("The number that you have entered is out of range.")
-					discard_round(1,total)
-				if(int(get_value_of_card(player_remaining[temp-1])) + total > 31):
+					discard_round(1)
+				tempval=int(get_value_of_card(player_remaining[temp-1]))
+				if(tempval + total > 31):
 					print("The calue of that card is too high. The highest that the total can be is 31")
-					discard_round(1,total)
+					discard_round(1)
 				else:
 					print("You have played the "+str(convert_card_list_to_symbols([player_remaining[temp-1]])))
+					total += tempval
 					remove_number_n_from_p_and_place_in_x(temp,player_remaining,discarded)
-					total += int(get_value_of_card(player_remaining[temp-1]))
 					last_card=1
 					if(total==15):
 						print("You got the total to 15! You get 2 points!")
@@ -129,19 +129,19 @@ def discard_round(turn,total):
 						player_score+=2
 						total=0 
 						discarded=[]
-					discard_round(2,total)
+					discard_round(2)
 			else:
 				print("No possible moves. It is now the computer\'s turn")
 				go+=1
-				discard_round(2,total)
+				discard_round(2)
 		else:
 			if(len(comp_remaining)==0):
 				print("The computer has run out of cards")
-				discard_round(1,total)
+				discard_round(1)
 			elif(possible_discard(comp_remaining)):
 				temp=randint(1,len(comp_remaining))
 				if(int(get_value_of_card(comp_remaining[temp-1])) + total > 31):
-					discard_round(2,total)
+					discard_round(2)
 				else:
 					print("\nThe computer has played the "+str(convert_card_list_to_symbols([comp_remaining[temp-1]])))
 					total += int(get_value_of_card(comp_remaining[temp-1]))
@@ -155,11 +155,11 @@ def discard_round(turn,total):
 						computer_score+=2
 						total=0
 						discarded=[]
-					discard_round(1,total)
+					discard_round(1)
 			else:
 				go+=1
 				print("The computer said go. It is now your turn.")
-				discard_round(1,total)
+				discard_round(1)
 	else:
 		print("There are no possible moves")
 		discarded=[]
@@ -167,12 +167,12 @@ def discard_round(turn,total):
 				print("You placed the last card. You get 1 point!")
 				player_score+=1
 				total=0
-				discard_round(2,total)
+				discard_round(2)
 		else:
 			print("The computer placed the last card and now gets a point")
 			computer_score+=1
 			total=0
-			discard_round(1,total)
+			discard_round(1)
 
 
 #start()
@@ -205,6 +205,6 @@ remove_number_n_from_p_and_place_in_x(int(temp),player_hand,crib)
 #print("\nThe starting card is "+str(convert_card_list_to_symbols([start_card])))
 player_remaining=player_hand[:]
 comp_remaining=comp_hand[:]
-discard_round(turn,0)
+discard_round(turn)
 
 
