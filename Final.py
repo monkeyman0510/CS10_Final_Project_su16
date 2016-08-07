@@ -63,7 +63,7 @@ def convert_card_list_to_symbols(cards):
 def remove_number_n_from_p_and_place_in_x(n,p,x):
 	if (n>len(p) or n<=0):
 		n=len(p)
-	x.append(player_hand.pop(n-1)) #Assists with abstraction
+	x.append(p.pop(n-1)) #Assists with abstraction
 
 def deal_n_using_deck(n): 
 	#Takes n cards out of the deck variable and returns them as a seperate list
@@ -96,17 +96,10 @@ go=0
 last_card=0
 
 def discard_round(turn,total):
-	global go
+	global go, player_score, computer_score, player_remaining, comp_remaining, discarded, total
 	if(len(player_remaining)==0 and len(comp_remaining)==0):
 		print("There are no remaining cards. Now scoring")
-	else:
-		if(go==2):
-			if(last_card==1):
-				print("You placed the last card. You get 1 point!")
-				player_score+=1
-			else:
-				print("The computer placed the last card and now gets a point")
-				computer_score+=1
+	elif(possible_discard(player_remaining) or possible_discard(comp_remaining)):	
 		if(turn==1):
 			if(len(player_remaining)==0):
 				print("You have run out of cards")
@@ -125,8 +118,8 @@ def discard_round(turn,total):
 					discard_round(1,total)
 				else:
 					print("You have played the "+str(convert_card_list_to_symbols([player_remaining[temp-1]])))
-					remove_number_n_from_p_and_place_in_x(temp,player_remaining,[])
-					total = int(get_value_of_card(player_remaining[temp-1])) + total
+					remove_number_n_from_p_and_place_in_x(temp,player_remaining,discarded)
+					total += int(get_value_of_card(player_remaining[temp-1]))
 					last_card=1
 					if(total==15):
 						print("You got the total to 15! You get 2 points!")
@@ -135,6 +128,7 @@ def discard_round(turn,total):
 						print("You got the total to 31! You get 2 points!")
 						player_score+=2
 						total=0 
+						discarded=[]
 					discard_round(2,total)
 			else:
 				print("No possible moves. It is now the computer\'s turn")
@@ -145,34 +139,48 @@ def discard_round(turn,total):
 				print("The computer has run out of cards")
 				discard_round(1,total)
 			elif(possible_discard(comp_remaining)):
-				temp=randint(1,len(comp_remaining))			
-				if(temp>len(comp_remaining) or temp<1):
+				temp=randint(1,len(comp_remaining))
+				if(int(get_value_of_card(comp_remaining[temp-1])) + total > 31):
 					discard_round(2,total)
-					if(int(get_value_of_card(comp_remaining[temp-1])) + total > 31):
-						discard_round(1,total)
-					else:
-						print("The computer has played the "+str(convert_card_list_to_symbols(comp_remaining[temp-1])))
-						remove_number_n_from_p_and_place_in_x(temp,comp_remaining,[])
-						total = int(get_value_of_card(comp_remaining[temp-1])) + total
-						last_card=2 				
-						if(total==15): 
-							print("The comuputer got the total to 15 and has recieved 2 points.")
-							computer_score+=2
-						if(total==31): 
-							print("The comuputer got the total to 31 and has recieved 2 points.")
-							computer_score+=2
-							total=0
-						discard_round(1,total)
+				else:
+					print("\nThe computer has played the "+str(convert_card_list_to_symbols([comp_remaining[temp-1]])))
+					total += int(get_value_of_card(comp_remaining[temp-1]))
+					remove_number_n_from_p_and_place_in_x(temp,comp_remaining,discarded)
+					last_card=2 				
+					if(total==15): 
+						print("The comuputer got the total to 15 and has recieved 2 points.")
+						computer_score+=2
+					if(total==31): 
+						print("The comuputer got the total to 31 and has recieved 2 points.")
+						computer_score+=2
+						total=0
+						discarded=[]
+					discard_round(1,total)
 			else:
 				go+=1
 				print("The computer said go. It is now your turn.")
 				discard_round(1,total)
+	else:
+		print("There are no possible moves")
+		discarded=[]
+		if(last_card==1):
+				print("You placed the last card. You get 1 point!")
+				player_score+=1
+				total=0
+				discard_round(2,total)
+		else:
+			print("The computer placed the last card and now gets a point")
+			computer_score+=1
+			total=0
+			discard_round(1,total)
 
-start()
+
+#start()
 
 
+#deck = make_a_shuffled_deck(list_of_all_cards)
 
-deck = make_a_shuffled_deck(list_of_all_cards)
+deck=list_of_all_cards[:]
 
 player_hand=deal_n_using_deck(6)
 comp_hand=deal_n_using_deck(4)
@@ -180,8 +188,9 @@ crib=deal_n_using_deck(2) #Auto adds computer's cards to crib - May add AI to do
 start_card=deal_n_using_deck(1)[0]
 player_score=0
 computer_score=0
-turn=1
+turn=randint(1,2)
 total=0
+discarded=[]
 
 print("\nHere is your hand. Please say the number (1-6) of one of the cards that you would like to place into the crib.\nPlease note \'T\' stands for 10 and that entering a number higher than your hand will use your last card.")
 print(convert_card_list_to_symbols(player_hand))
