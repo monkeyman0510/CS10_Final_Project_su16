@@ -42,15 +42,24 @@ def get_value_of_card(inp):
 	temp=inp[0]
 	return cardvals[str(temp)]
 
+def get_value_of_cards_in_deck(deck):
+	numdeck=deck[:]
+	[get_value_of_card(x) for x in numdeck]
+	return numdeck
+
+def remove_suits(deck):
+	suitdeck=deck[:]
+	return [x[0] for x in suitdeck]
+
 def convert_card_list_to_symbols(cards):
 	#Makes easy for user to read the cards
 	symb=[]
 	temp=""
-	s=u"\u2660" #unicode value of spades
-	c=u"\u2663" #unicode value of clubs
-	h=u"\u2665" #unicode value of hearts
-	d=u"\u2666" #unicode value of diamonds
-	#return(s,c,h,d)
+	s=u"\u2660" #unicode value of Spades
+	c=u"\u2663" #unicode value of Clubs
+	h=u"\u2665" #unicode value of Hearts
+	d=u"\u2666" #unicode value of Diamonds
+	#return(s,c,h,d) #<- Used for testing
 	for i in cards:
 		temp=i[1]
 		temp=if_x_is_y_replace_with_z(temp,'s',s) #Abstraction for instead of typing:
@@ -96,7 +105,7 @@ go=0
 last_card=0
 
 def discard_round(turn):
-	global go, player_score, computer_score, player_remaining, comp_remaining, discarded, total
+	global go, player_score, computer_score, player_remaining, comp_remaining, discarded, total, last_card
 	if(len(player_remaining)==0 and len(comp_remaining)==0):
 		print("There are no remaining cards. Now scoring")
 	elif(possible_discard(player_remaining) or possible_discard(comp_remaining)):	
@@ -174,9 +183,43 @@ def discard_round(turn):
 			total=0
 			discard_round(1)
 
+def score(hand, player):
+	global player_score, computer_score
+	handval=get_value_of_cards_in_deck(hand)
+	handcards=remove_suits(hand)
+	all_nums=['A',2,3,4,5,6,7,8,9,'T','J','Q','K']
+	all_nums = [handcards.count(x) for x in all_nums]
+	while(all_nums.count(4)>0):
+		if(player==1):
+			print("You have 4 of a kind, +12 points!")
+			player_score += 12
+
+		else:
+			print("The computer has 4 of a kind, +12 points!")
+			computer_score +=12
+		all_nums.remove(4)
+	while(all_nums.count(3)>0):
+		if(player==1):
+			print("You have 3 of a kind, +6 points!")
+			player_score += 6
+
+		else:
+			print("The computer has 3 of a kind, +6 points!")
+			computer_score +=6
+		all_nums.remove(3)
+	while(all_nums.count(2)>0):
+		if(player==1):
+			print("You have 2 of a kind, +2 points!")
+			player_score += 2
+
+		else:
+			print("The computer has 2 of a kind, +2 points!")
+			computer_score +=2
+		all_nums.remove(2)
+
+
 
 #start()
-
 
 #deck = make_a_shuffled_deck(list_of_all_cards)
 
@@ -188,7 +231,7 @@ crib=deal_n_using_deck(2) #Auto adds computer's cards to crib - May add AI to do
 start_card=deal_n_using_deck(1)[0]
 player_score=0
 computer_score=0
-turn=randint(1,2)
+turn=1
 total=0
 discarded=[]
 
@@ -205,6 +248,10 @@ remove_number_n_from_p_and_place_in_x(int(temp),player_hand,crib)
 #print("\nThe starting card is "+str(convert_card_list_to_symbols([start_card])))
 player_remaining=player_hand[:]
 comp_remaining=comp_hand[:]
-discard_round(turn)
-
-
+#discard_round(turn)
+player_hand.append(start_card)
+comp_hand.append(start_card)
+score(player_hand,1)
+print(" ")
+score(comp_hand,2)
+print(str(player_score)+" "+str(computer_score))
