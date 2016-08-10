@@ -44,8 +44,7 @@ def get_value_of_card(inp):
 
 def get_value_of_cards_in_deck(deck):
 	numdeck=deck[:]
-	[get_value_of_card(x) for x in numdeck]
-	return numdeck
+	return [get_value_of_card(x) for x in numdeck]
 
 def remove_suits(deck):
 	suitdeck=deck[:]
@@ -101,6 +100,12 @@ def possible_discard(deck):
 			return True
 	return False
 
+def fifteens(v, i, S):
+  if i >= len(v): return 1 if S == 0 else 0
+  count = int(fifteens(v, i + 1, S))
+  count += int(fifteens(v, i + 1, S - v[i]))
+  return count
+
 go=0
 last_card=0
 
@@ -130,6 +135,20 @@ def discard_round(turn):
 					total += tempval
 					remove_number_n_from_p_and_place_in_x(temp,player_remaining,discarded)
 					last_card=1
+					if(len(discarded>1)): #Detects if a player has any matching cards for extra points
+						if(tempval==get_value_of_card(discarded[-2])):
+							if(len(discarded>2)):
+								if(tempval==get_value_of_card(discarded[-3])):
+									if(len(discarded>3)):
+										if(tempval==get_value_of_card(discarded[-4])):
+											print("Four of a kind! +12 points!")
+											player_score+=12
+									else:
+										print("Three of a kind! +6 points!")
+										player_score+=6
+							else:
+								print("Two of a kind! +2 points!")
+								player_score+=2
 					if(total==15):
 						print("You got the total to 15! You get 2 points!")
 						player_score+=2
@@ -155,7 +174,21 @@ def discard_round(turn):
 					print("\nThe computer has played the "+str(convert_card_list_to_symbols([comp_remaining[temp-1]])))
 					total += int(get_value_of_card(comp_remaining[temp-1]))
 					remove_number_n_from_p_and_place_in_x(temp,comp_remaining,discarded)
-					last_card=2 				
+					last_card=2
+					if(len(discarded>1)): #Detects if the computer has any matching cards for extra points
+						if(tempval==get_value_of_card(discarded[-2])):
+							if(len(discarded>2)):
+								if(tempval==get_value_of_card(discarded[-3])):
+									if(len(discarded>3)):
+										if(tempval==get_value_of_card(discarded[-4])):
+											print("Four of a kind! +12 points!")
+											computer_score+=12
+									else:
+										print("Three of a kind! +6 points!")
+										computer_score+=6
+							else:
+								print("Two of a kind! +2 points!")
+								computer_score+=2 				
 					if(total==15): 
 						print("The comuputer got the total to 15 and has recieved 2 points.")
 						computer_score+=2
@@ -187,7 +220,7 @@ def score(hand, player):
 	global player_score, computer_score
 	handval=get_value_of_cards_in_deck(hand)
 	handcards=remove_suits(hand)
-	all_nums=['A',2,3,4,5,6,7,8,9,'T','J','Q','K']
+	all_nums =['A',2,3,4,5,6,7,8,9,'T','J','Q','K']
 	all_nums = [handcards.count(x) for x in all_nums]
 	while(all_nums.count(4)>0):
 		if(player==1):
@@ -216,6 +249,21 @@ def score(hand, player):
 			print("The computer has 2 of a kind, +2 points!")
 			computer_score +=2
 		all_nums.remove(2)
+	amtOfFifteens=int(fifteens(handval,0,15,))
+	if(player==1):
+		if(amtOfFifteens==1):
+			print("You have one 15. +2 points.")
+			player_score+=2
+		else:
+			print("You have "+str(amtOfFifteens)+" 15s. +"+str(amtOfFifteens*2)+" points.")
+			player_score+=amtOfFifteens*2
+	else:
+		if(amtOfFifteens==1):
+			print("The computer has one 15. +2 points.")
+			computer_score+=2
+		else:
+			print("The computer has "+str(amtOfFifteens)+" 15s. +"+str(amtOfFifteens*2)+" points.")
+			computer_score+=amtOfFifteens*2
 
 
 
@@ -254,4 +302,4 @@ comp_hand.append(start_card)
 score(player_hand,1)
 print(" ")
 score(comp_hand,2)
-print(str(player_score)+" "+str(computer_score))
+print("Your current total is "str(player_score)+"\nThe computer\'s current total is "+str(computer_score))
