@@ -3,19 +3,21 @@ from random import randint, shuffle
 
 
 def start():
-	title = "\033[1m\033[35m\nFinal Project by Devin Rosenthal\n\033[0m"
-	instructions = "\ntemp - fill in later"
+	title = "\033[1m\033[35m\nCribbage by Devin Rosenthal\n\033[0m"
+	instructions = "http://www.cribbage.org/rules/rule1.asp"
 	temp=""
 	while("start" not in temp.lower()):
 		temp = input("Type \"Help\" for Rules\nType \"Start\" to Start\nType \"Credits\" for Credits\n")
 		if("help" in temp.lower()):
-			webbrowser.open("http://www.cribbage.org/rules/rule1.asp")
+			webbrowser.open(instructions)
 		if ("credits" in temp.lower()):
 			print(title)
 
 list_of_all_cards = [['A','s'],[2,'s'],[3,'s'],[4,'s'],[5,'s'],[6,'s'],[7,'s'],[8,'s'],[9,'s'],['T','s'],['J','s'],['Q','s'],['K','s'],['A','c'],[2,'c'],[3,'c'],[4,'c'],[5,'c'],[6,'c'],[7,'c'],[8,'c'],[9,'c'],['T','c'],['J','c'],['Q','c'],['K','c'],['A','h'],[2,'h'],[3,'h'],[4,'h'],[5,'h'],[6,'h'],[7,'h'],[8,'h'],[9,'h'],['T','h'],['J','h'],['Q','h'],['K','h'],['A','d'],[2,'d'],[3,'d'],[4,'d'],[5,'d'],[6,'d'],[7,'d'],[8,'d'],[9,'d'],['T','d'],['J','d'],['Q','d'],['K','d']]
 
 cardvals = {"A":1,"2":2,"3":3,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9,"T":10,"J":10,"Q":10,"K":10}
+
+cardplaces = {"A":1,"2":2,"3":3,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9,"T":10,"J":11,"Q":12,"K":13}
 
 def make_a_shuffled_deck(cards):
 	#Takes list of all possible values and shuffles it to return a new deck
@@ -42,9 +44,17 @@ def get_value_of_card(inp):
 	temp=inp[0]
 	return cardvals[str(temp)]
 
+def get_place_of_card(inp):
+	temp=inp[0]
+	return cardplaces[str(temp)]
+
 def get_value_of_cards_in_deck(deck):
 	numdeck=deck[:]
 	return [get_value_of_card(x) for x in numdeck]
+
+def get_place_of_cards_in_deck(deck):
+	placedeck=deck[:]
+	return [get_place_of_card(x) for x in placedeck]
 
 def remove_suits(deck):
 	suitdeck=deck[:]
@@ -82,14 +92,21 @@ def deal_n_using_deck(n):
 		deck.remove(deck[cardno])
 	return(player)
 
-def debug():
-	print("\nstart_card:\n"+str(convert_card_list_to_symbols(start_card)))
-	print("\nplayer_hand:\n"+str(convert_card_list_to_symbols(player_hand)))
-	print("\ncomp_hand:\n"+str(convert_card_list_to_symbols(comp_hand)))
-	print("\ncrib:\n"+str(convert_card_list_to_symbols(crib)))
-	print("\ndeck:\n"+str(convert_card_list_to_symbols(deck)))
+def tests():
+	if remove_suits([['A','s'],[2,'h'],['T','d']]) == ['A',2,'T']:
+		print("Test for \'remove_suits\' passes!")
+	else:
+		print("Test for \'remove_suits\' fails!")
+
+	total=30
+	if possible_discard([['A','s'],[2,'h'],['T','d']]) == True:
+		print("Test for \'possible_discard\' passes!")
+	else:
+		print("Test for \'possible_discard\' fails!")
+
 
 def ptotal():
+	#prints the total for abstraction
 	print("\nThe current total is "+str(total))
 
 def possible_discard(deck):
@@ -112,7 +129,7 @@ last_card=0
 def discard_round(turn):
 	global go, player_score, computer_score, player_remaining, comp_remaining, discarded, total, last_card
 	if(len(player_remaining)==0 and len(comp_remaining)==0):
-		print("There are no remaining cards. Now scoring")
+		print("There are no remaining cards.")
 	elif(possible_discard(player_remaining) or possible_discard(comp_remaining)):	
 		if(turn==1):
 			if(len(player_remaining)==0):
@@ -127,6 +144,7 @@ def discard_round(turn):
 					print("The number that you have entered is out of range.")
 					discard_round(1)
 				tempval=int(get_value_of_card(player_remaining[temp-1]))
+				temptype=str(remove_suits([player_remaining[temp-1]]))
 				if(tempval + total > 31):
 					print("The calue of that card is too high. The highest that the total can be is 31")
 					discard_round(1)
@@ -135,12 +153,12 @@ def discard_round(turn):
 					total += tempval
 					remove_number_n_from_p_and_place_in_x(temp,player_remaining,discarded)
 					last_card=1
-					if(len(discarded>1)): #Detects if a player has any matching cards for extra points
-						if(tempval==get_value_of_card(discarded[-2])):
-							if(len(discarded>2)):
-								if(tempval==get_value_of_card(discarded[-3])):
-									if(len(discarded>3)):
-										if(tempval==get_value_of_card(discarded[-4])):
+					if(len(discarded)>1): #Detects if a player has any matching cards for extra points
+						if(temptype==remove_suits([discarded[-2]])):
+							if(len(discarded)>2):
+								if(temptype==remove_suits([discarded[-3]])):
+									if(len(discarded)>3):
+										if(temptype==remove_suits([discarded[-4]])):
 											print("Four of a kind! +12 points!")
 											player_score+=12
 									else:
@@ -168,19 +186,21 @@ def discard_round(turn):
 				discard_round(1)
 			elif(possible_discard(comp_remaining)):
 				temp=randint(1,len(comp_remaining))
-				if(int(get_value_of_card(comp_remaining[temp-1])) + total > 31):
+				tempval=int(get_value_of_card(comp_remaining[temp-1]))
+				temptype=str(remove_suits([comp_remaining[temp-1]]))
+				if(tempval + total > 31):
 					discard_round(2)
 				else:
 					print("\nThe computer has played the "+str(convert_card_list_to_symbols([comp_remaining[temp-1]])))
-					total += int(get_value_of_card(comp_remaining[temp-1]))
+					total += tempval
 					remove_number_n_from_p_and_place_in_x(temp,comp_remaining,discarded)
 					last_card=2
-					if(len(discarded>1)): #Detects if the computer has any matching cards for extra points
-						if(tempval==get_value_of_card(discarded[-2])):
-							if(len(discarded>2)):
-								if(tempval==get_value_of_card(discarded[-3])):
-									if(len(discarded>3)):
-										if(tempval==get_value_of_card(discarded[-4])):
+					if(len(discarded)>1): #Detects if the computer has any matching cards for extra points
+						if(temptype==remove_suits([discarded[-2]])):
+							if(len(discarded)>2):
+								if(temptype==remove_suits([discarded[-3]])):
+									if(len(discarded)>3):
+										if(temptype==remove_suits([discarded[-4]])):
 											print("Four of a kind! +12 points!")
 											computer_score+=12
 									else:
@@ -219,10 +239,12 @@ def discard_round(turn):
 def score(hand, player):
 	global player_score, computer_score
 	handval=get_value_of_cards_in_deck(hand)
+	handplace=get_place_of_cards_in_deck(hand)
 	handcards=remove_suits(hand)
 	all_nums =['A',2,3,4,5,6,7,8,9,'T','J','Q','K']
 	all_nums = [handcards.count(x) for x in all_nums]
-	while(all_nums.count(4)>0):
+	#possible_runs=[['A',2,3],[2,3,4],[3,4,5],[4,5,6],[5,6,7],[6,7,8],[7,8,9],[8,9,'T'],[9,'T','J'],['T','J','Q'],['J','Q','K']]
+	while(all_nums.count(4)>0): #Check for pairs/triples/quadruples
 		if(player==1):
 			print("You have 4 of a kind, +12 points!")
 			player_score += 12
@@ -249,57 +271,98 @@ def score(hand, player):
 			print("The computer has 2 of a kind, +2 points!")
 			computer_score +=2
 		all_nums.remove(2)
-	amtOfFifteens=int(fifteens(handval,0,15,))
+	amtOfFifteens=int(fifteens(handval,0,15,)) #Check for 15s
 	if(player==1):
 		if(amtOfFifteens==1):
 			print("You have one 15. +2 points.")
 			player_score+=2
-		else:
+		elif(amtOfFifteens!=0):
 			print("You have "+str(amtOfFifteens)+" 15s. +"+str(amtOfFifteens*2)+" points.")
 			player_score+=amtOfFifteens*2
 	else:
 		if(amtOfFifteens==1):
 			print("The computer has one 15. +2 points.")
 			computer_score+=2
-		else:
+		elif(amtOfFifteens!=0):
 			print("The computer has "+str(amtOfFifteens)+" 15s. +"+str(amtOfFifteens*2)+" points.")
 			computer_score+=amtOfFifteens*2
+	if (hand[0][1]==hand[1][1] and hand[0][1]==hand[2][1] and hand[0][1]==hand[3][1]):
+		if(hand[0][1]==hand[4][1]): #Checks for a flush
+			if(player==1):
+				print("You have a 5 card flush! +5 points!")
+				player_score+=5
+			else:
+				print("The computer has a 5 card flush. +5 points.")
+				computer_score+=5
+		else:
+			if(player==1):
+				print("You have a 4 card flush! +4 points!")
+				player_score+=4
+			else:
+				print("The computer has a 4 card flush. +4 points.")
+				computer_score+=4
+	for i in range (0,4):
+		if hand[i][0]=='J' and hand[i][1] == hand[4][1]:
+			if(player==1):
+				print("You have nobs. +1 point")
+				player_score+=1
+			else:
+				print("The computer has nobs. +1 point")
+				computer_score+=1
+	runOfFour=False
+	handplace.sort()
+	if(handplace[4]-handplace[3]==1 and handplace[3]-handplace[2]==1 and handplace[2]-handplace[1]==1 and handplace[1]-handplace[0]==1):
+		if player==1:
+			print("You have a run of 5! +5 points!")
+			player_score+=5
+		else:
+			print("The computer has a run of 5. +5 points.")
+			computer_score+=5
+	else:
+		for i in range (0,2):
+			for j in range (i+1,3):
+				for k in range (j+1,4):
+					for l in range (k+1,5):
+						if handplace[l]-handplace[k]==1 and handplace[k]-handplace[j]==1 and handplace[j]-handplace[i]==1:
+							if player==1:
+								print("You have a run of 4! +4 points!")
+								player_score+=4
+							else:
+								print("The computer has a run of 4. +4 points.")
+								computer_score+=4
+							runOfFour=True
+		if(not runOfFour):
+			for i in range (0,3):
+				for j in range (i+1,4):
+					for k in range (j+1,5):
+						if handplace[k]-handplace[j]==1 and handplace[j]-handplace[i]==1:
+							if player==1:
+								print("You have a run of 3! +3 points!")
+								player_score+=3
+							else:
+								print("The computer has a run of 3. +3 points.")
+								computer_score+=3
 
 
-
-#start()
-
-#deck = make_a_shuffled_deck(list_of_all_cards)
-
-deck=list_of_all_cards[:]
-
-player_hand=deal_n_using_deck(6)
-comp_hand=deal_n_using_deck(4)
-crib=deal_n_using_deck(2) #Auto adds computer's cards to crib - May add AI to do this instead (To make it more advanced)
-start_card=deal_n_using_deck(1)[0]
 player_score=0
 computer_score=0
 turn=1
-total=0
 discarded=[]
+deck=[]
+crib=[]
+start_card=[]
+player_hand=[]
+comp_hand=[]
+total=0
+player_remaining=[]
+comp_remaining=[]
+crib_owner="you"
 
-print("\nHere is your hand. Please say the number (1-6) of one of the cards that you would like to place into the crib.\nPlease note \'T\' stands for 10 and that entering a number higher than your hand will use your last card.")
-print(convert_card_list_to_symbols(player_hand))
-temp=input("")
-remove_number_n_from_p_and_place_in_x(int(temp),player_hand,crib)
-print("\nPlease place one more card into the crib.")
-print(convert_card_list_to_symbols(player_hand))
-temp=input("")
-remove_number_n_from_p_and_place_in_x(int(temp),player_hand,crib)
-#print("\nHere is your hand")
-#print(convert_card_list_to_symbols(player_hand)) 
-#print("\nThe starting card is "+str(convert_card_list_to_symbols([start_card])))
-player_remaining=player_hand[:]
-comp_remaining=comp_hand[:]
-#discard_round(turn)
-player_hand.append(start_card)
-comp_hand.append(start_card)
-score(player_hand,1)
-print(" ")
-score(comp_hand,2)
-print("Your current total is "str(player_score)+"\nThe computer\'s current total is "+str(computer_score))
+def play():#Here is the entire game with extraction
+start()
+while(player_score<121 or computer_score<121):
+	play()
+if (player_score>computer_score):
+	print("You win!!!!!!!")
+else:
+	print("The computer wins.")
