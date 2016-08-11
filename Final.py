@@ -142,43 +142,51 @@ def discard_round(turn):
 				print("\nHere is your hand") 
 				print(convert_card_list_to_symbols(player_remaining))
 				ptotal()
-				temp = int(input("Which card would you like to play?\nCard number "))
-				if(temp>len(player_remaining) or temp<1):
-					print("The number that you have entered is out of range.")
-					discard_round(1)
-				tempval=int(get_value_of_card(player_remaining[temp-1]))
-				temptype=str(remove_suits([player_remaining[temp-1]]))
-				if(tempval + total > 31):
-					print("The calue of that card is too high. The highest that the total can be is 31")
-					discard_round(1)
-				else:
-					print("You have played the "+str(convert_card_list_to_symbols([player_remaining[temp-1]])))
-					total += tempval
-					remove_number_n_from_p_and_place_in_x(temp,player_remaining,discarded)
-					last_card=1
-					if(len(discarded)>1): #Detects if a player has any matching cards for extra points
-						if(temptype==remove_suits([discarded[-2]])):
-							if(len(discarded)>2):
-								if(temptype==remove_suits([discarded[-3]])):
-									if(len(discarded)>3):
-										if(temptype==remove_suits([discarded[-4]])):
-											print("Four of a kind! +12 points!")
-											player_score+=12
-									else:
-										print("Three of a kind! +6 points!")
-										player_score+=6
+				cont=True
+				temp=""
+				while(cont):
+					temp = input("Which card would you like to play?\nCard number ")
+					try:
+						temp=int(temp)
+					except ValueError:
+						print("Please enter a number.")
+					if(isinstance(temp,int)):
+						if(temp>len(player_remaining) or temp<1):
+								print("The number that you have entered is out of range.")
+						else:
+							tempval=int(get_value_of_card(player_remaining[temp-1]))
+							temptype=str(remove_suits([player_remaining[temp-1]]))
+							if(tempval + total > 31):
+								print("The calue of that card is too high. The highest that the total can be is 31")
 							else:
-								print("Two of a kind! +2 points!")
-								player_score+=2
-					if(total==15):
-						print("You got the total to 15! You get 2 points!")
-						player_score+=2
-					if(total==31):
-						print("You got the total to 31! You get 2 points!")
-						player_score+=2
-						total=0 
-						discarded=[]
-					discard_round(2)
+								cont=False
+				print("You have played the "+str(convert_card_list_to_symbols([player_remaining[temp-1]])))
+				total += tempval
+				remove_number_n_from_p_and_place_in_x(temp,player_remaining,discarded)
+				last_card=1
+				if(len(discarded)>1): #Detects if a player has any matching cards for extra points
+					if(temptype==remove_suits([discarded[-2]])):
+						if(len(discarded)>2):
+							if(temptype==remove_suits([discarded[-3]])):
+								if(len(discarded)>3):
+									if(temptype==remove_suits([discarded[-4]])):
+										print("Four of a kind! +12 points!")
+										player_score+=12
+								else:
+									print("Three of a kind! +6 points!")
+									player_score+=6
+						else:
+							print("Two of a kind! +2 points!")
+							player_score+=2
+				if(total==15):
+					print("You got the total to 15! You get 2 points!")
+					player_score+=2
+				if(total==31):
+					print("You got the total to 31! You get 2 points!")
+					player_score+=2
+					total=0 
+					discarded=[]
+				discard_round(2)
 			else:
 				print("No possible moves. It is now the computer\'s turn")
 				go+=1
@@ -213,10 +221,10 @@ def discard_round(turn):
 								print("Two of a kind! +2 points!")
 								computer_score+=2 				
 					if(total==15): 
-						print("The comuputer got the total to 15 and has recieved 2 points.")
+						print("The comuputer got the total to 15 and has received 2 points.")
 						computer_score+=2
 					if(total==31): 
-						print("The comuputer got the total to 31 and has recieved 2 points.")
+						print("The comuputer got the total to 31 and has received 2 points.")
 						computer_score+=2
 						total=0
 						discarded=[]
@@ -346,7 +354,7 @@ def score(hand, player):
 								computer_score+=3
 
 def play():#Here is the entire game with extraction
-	global player_hand, crib, player_remaining, comp_remaining, start_card, player_score, computer_score, crib_owner, deck
+	global player_hand, crib, player_remaining, comp_remaining, start_card, player_score, computer_score, crib_owner, deck, total
 	deck=make_a_shuffled_deck(list_of_all_cards)
 	player_hand=deal_n_using_deck(6)
 	comp_hand=deal_n_using_deck(4)
@@ -394,7 +402,7 @@ def play():#Here is the entire game with extraction
 #setup global variables
 go=0
 last_card=0
-player_score=125
+player_score=0
 computer_score=0
 turn=1
 discarded=[]
