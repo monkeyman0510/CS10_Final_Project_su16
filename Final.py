@@ -127,6 +127,12 @@ def discard_round(turn):
 	global go, player_score, computer_score, player_remaining, comp_remaining, discarded, total, last_card
 	if(len(player_remaining)==0 and len(comp_remaining)==0):
 		print("There are no remaining cards.")
+		if(last_card==1):
+				print("You placed the last card. You get 1 point!")
+				player_score+=1
+		else:
+			print("The computer placed the last card and now gets a point")
+			computer_score+=1
 	elif(possible_discard(player_remaining) or possible_discard(comp_remaining)):	
 		if(turn==1):
 			if(len(player_remaining)==0):
@@ -136,7 +142,7 @@ def discard_round(turn):
 				print("\nHere is your hand") 
 				print(convert_card_list_to_symbols(player_remaining))
 				ptotal()
-				temp = int(input("Which card would you like to play?\n"))
+				temp = int(input("Which card would you like to play?\nCard number "))
 				if(temp>len(player_remaining) or temp<1):
 					print("The number that you have entered is out of range.")
 					discard_round(1)
@@ -245,7 +251,6 @@ def score(hand, player):
 		if(player==1):
 			print("You have 4 of a kind, +12 points!")
 			player_score += 12
-
 		else:
 			print("The computer has 4 of a kind, +12 points!")
 			computer_score +=12
@@ -351,11 +356,11 @@ def play():#Here is the entire game with extraction
 	print("\nThe crib belongs to "+crib_owner)
 	print("\nHere is your hand. Please say the number (1-6) of one of the cards that you would like to place into the crib.\nPlease note \'T\' stands for 10 and that entering a number higher than your hand will use your last card.")
 	print(convert_card_list_to_symbols(player_hand))
-	temp=input("")
+	temp=input("Card number ")
 	remove_number_n_from_p_and_place_in_x(int(temp),player_hand,crib)
 	print("\nPlease place one more card into the crib.")
 	print(convert_card_list_to_symbols(player_hand))
-	temp=input("")
+	temp=input("Card number ")
 	remove_number_n_from_p_and_place_in_x(int(temp),player_hand,crib)
 	#print("\nHere is your hand")
 	#print(convert_card_list_to_symbols(player_hand)) 
@@ -377,18 +382,19 @@ def play():#Here is the entire game with extraction
 	else:
 		score(crib,2)
 		crib_owner="you"
-	print("Your current total is "+str(player_score)+"\nThe computer\'s current total is "+str(computer_score))
-	while(player_score<121 or computer_score<121):
+	print("\nYour current total is "+str(player_score)+"\nThe computer\'s current total is "+str(computer_score)+"\n")
+	if(player_score<121 and computer_score<121):
 		play()
-	if (player_score>computer_score):
-		print("You win!!!!!!!")
 	else:
-		print("The computer wins.")
+		if (player_score>computer_score):
+			print("\033[35m\u2326 You win!!!\u232B\033[0m")
+		else:
+			print("The computer wins.")
 
 #setup global variables
 go=0
 last_card=0
-player_score=0
+player_score=125
 computer_score=0
 turn=1
 discarded=[]
