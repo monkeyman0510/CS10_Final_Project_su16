@@ -1,0 +1,3 @@
+This project is the game Cribbage recreated in Python. It is entirely text based. To interact with the game, just type into the Terminal window. When the game opens, if you are unfamiliar with Cribbage, you can type “Help” and it will open a website with the rules of cribbage. While playing, to discard a card, simply type its place number in the deck. (Ex. If this is your hand: [['K of ♠'], ['3 of ♥'], ['7 of ♦'], ['8 of ♣'], ['T of ♠']] To play the 3 of hearts, type 2 then press enter.) The game will also automatically keep score for you and will score your cards at the end of each round. The game will end when someone has a score of at least 121, as per normal cribbage.
+
+Watch the tutorial at https://youtu.be/aQRbv4bUIpk
