@@ -12,6 +12,7 @@ def start():
 			webbrowser.open(instructions)
 		if ("credits" in temp.lower()):
 			print(title)
+	play()
 
 list_of_all_cards = [['A','s'],[2,'s'],[3,'s'],[4,'s'],[5,'s'],[6,'s'],[7,'s'],[8,'s'],[9,'s'],['T','s'],['J','s'],['Q','s'],['K','s'],['A','c'],[2,'c'],[3,'c'],[4,'c'],[5,'c'],[6,'c'],[7,'c'],[8,'c'],[9,'c'],['T','c'],['J','c'],['Q','c'],['K','c'],['A','h'],[2,'h'],[3,'h'],[4,'h'],[5,'h'],[6,'h'],[7,'h'],[8,'h'],[9,'h'],['T','h'],['J','h'],['Q','h'],['K','h'],['A','d'],[2,'d'],[3,'d'],[4,'d'],[5,'d'],[6,'d'],[7,'d'],[8,'d'],[9,'d'],['T','d'],['J','d'],['Q','d'],['K','d']]
 
@@ -104,7 +105,6 @@ def tests():
 	else:
 		print("Test for \'possible_discard\' fails!")
 
-
 def ptotal():
 	#prints the total for abstraction
 	print("\nThe current total is "+str(total))
@@ -122,9 +122,6 @@ def fifteens(v, i, S):
   count = int(fifteens(v, i + 1, S))
   count += int(fifteens(v, i + 1, S - v[i]))
   return count
-
-go=0
-last_card=0
 
 def discard_round(turn):
 	global go, player_score, computer_score, player_remaining, comp_remaining, discarded, total, last_card
@@ -343,7 +340,54 @@ def score(hand, player):
 								print("The computer has a run of 3. +3 points.")
 								computer_score+=3
 
+def play():#Here is the entire game with extraction
+	global player_hand, crib, player_remaining, comp_remaining, start_card, player_score, computer_score, crib_owner, deck
+	deck=make_a_shuffled_deck(list_of_all_cards)
+	player_hand=deal_n_using_deck(6)
+	comp_hand=deal_n_using_deck(4)
+	crib=deal_n_using_deck(2) #Auto adds computer's cards to crib - May add AI to do this instead (To make it more advanced)
+	start_card=deal_n_using_deck(1)[0]
+	total=0
+	print("\nThe crib belongs to "+crib_owner)
+	print("\nHere is your hand. Please say the number (1-6) of one of the cards that you would like to place into the crib.\nPlease note \'T\' stands for 10 and that entering a number higher than your hand will use your last card.")
+	print(convert_card_list_to_symbols(player_hand))
+	temp=input("")
+	remove_number_n_from_p_and_place_in_x(int(temp),player_hand,crib)
+	print("\nPlease place one more card into the crib.")
+	print(convert_card_list_to_symbols(player_hand))
+	temp=input("")
+	remove_number_n_from_p_and_place_in_x(int(temp),player_hand,crib)
+	#print("\nHere is your hand")
+	#print(convert_card_list_to_symbols(player_hand)) 
+	#print("\nThe starting card is "+str(convert_card_list_to_symbols([start_card])))
+	player_remaining=player_hand[:]
+	comp_remaining=comp_hand[:]
+	discard_round(turn)
+	player_hand.append(start_card)
+	comp_hand.append(start_card)
+	crib.append(start_card)
+	print("\nNow scoring your hand:\n")
+	score(player_hand,1)
+	print("\nNow scoring computer's hand:\n")
+	score(comp_hand,2)
+	print("\nNow scoring the crib:\n")
+	if(crib_owner=="you"):
+		score(crib,1)
+		crib_owner="the computer"
+	else:
+		score(crib,2)
+		crib_owner="you"
+	print("Your current total is "+str(player_score)+"\nThe computer\'s current total is "+str(computer_score))
+	while(player_score<121 or computer_score<121):
+		play()
+	if (player_score>computer_score):
+		print("You win!!!!!!!")
+	else:
+		print("The computer wins.")
 
+#setup global variables
+go=0
+last_card=0
 player_score=0
 computer_score=0
 turn=1
@@ -358,11 +402,5 @@ player_remaining=[]
 comp_remaining=[]
 crib_owner="you"
 
-def play():#Here is the entire game with extraction
+
 start()
-while(player_score<121 or computer_score<121):
-	play()
-if (player_score>computer_score):
-	print("You win!!!!!!!")
-else:
-	print("The computer wins.")
