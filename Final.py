@@ -196,39 +196,40 @@ def discard_round(turn):
 				print("The computer has run out of cards")
 				discard_round(1)
 			elif(possible_discard(comp_remaining)):
-				temp=randint(1,len(comp_remaining))
-				tempval=int(get_value_of_card(comp_remaining[temp-1]))
-				temptype=str(remove_suits([comp_remaining[temp-1]]))
-				if(tempval + total > 31):
-					discard_round(2)
-				else:
-					print("\nThe computer has played the "+str(convert_card_list_to_symbols([comp_remaining[temp-1]])))
-					total += tempval
-					remove_number_n_from_p_and_place_in_x(temp,comp_remaining,discarded)
-					last_card=2
-					if(len(discarded)>1): #Detects if the computer has any matching cards for extra points
-						if(temptype==remove_suits([discarded[-2]])):
-							if(len(discarded)>2):
-								if(temptype==remove_suits([discarded[-3]])):
-									if(len(discarded)>3):
-										if(temptype==remove_suits([discarded[-4]])):
-											print("Four of a kind! +12 points!")
-											computer_score+=12
-									else:
-										print("Three of a kind! +6 points!")
-										computer_score+=6
-							else:
-								print("Two of a kind! +2 points!")
-								computer_score+=2 				
-					if(total==15): 
-						print("The comuputer got the total to 15 and has received 2 points.")
-						computer_score+=2
-					if(total==31): 
-						print("The comuputer got the total to 31 and has received 2 points.")
-						computer_score+=2
-						total=0
-						discarded=[]
-					discard_round(1)
+				cont=True
+				while(cont):
+					temp=randint(1,len(comp_remaining))
+					tempval=int(get_value_of_card(comp_remaining[temp-1]))
+					temptype=str(remove_suits([comp_remaining[temp-1]]))
+					if not(tempval + total > 31):
+						cont=False
+				print("\nThe computer has played the "+str(convert_card_list_to_symbols([comp_remaining[temp-1]])))
+				total += tempval
+				remove_number_n_from_p_and_place_in_x(temp,comp_remaining,discarded)
+				last_card=2
+				if(len(discarded)>1): #Detects if the computer has any matching cards for extra points
+					if(temptype==remove_suits([discarded[-2]])):
+						if(len(discarded)>2):
+							if(temptype==remove_suits([discarded[-3]])):
+								if(len(discarded)>3):
+									if(temptype==remove_suits([discarded[-4]])):
+										print("Four of a kind! +12 points!")
+										computer_score+=12
+								else:
+									print("Three of a kind! +6 points!")
+									computer_score+=6
+						else:
+							print("Two of a kind! +2 points!")
+							computer_score+=2 				
+				if(total==15): 
+					print("The comuputer got the total to 15 and has received 2 points.")
+					computer_score+=2
+				if(total==31): 
+					print("The comuputer got the total to 31 and has received 2 points.")
+					computer_score+=2
+					total=0
+					discarded=[]
+				discard_round(1)
 			else:
 				go+=1
 				print("The computer said go. It is now your turn.")
