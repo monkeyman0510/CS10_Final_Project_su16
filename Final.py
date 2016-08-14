@@ -377,6 +377,7 @@ def play():#Here is the entire game with extraction
 	player_remaining=player_hand[:]
 	comp_remaining=comp_hand[:]
 	discard_round(turn)
+	print("\nThe starting card is "+str(convert_card_list_to_symbols([start_card])))
 	player_hand.append(start_card)
 	comp_hand.append(start_card)
 	crib.append(start_card)
